@@ -17,10 +17,13 @@ add_executable(csnake
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/color.h"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/game.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/game.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/input.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/input.h"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/platform.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/platform.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/draw.c"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/draw.h"
 	)
 
 # Reference include directory

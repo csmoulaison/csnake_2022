@@ -5,42 +5,39 @@
 #include <SDL2/SDL.h>
 #include "SDL_render.h"
 #include "SDL_video.h"
-#include "platform.h"
 #include "game.h"
+#include "draw.h"
 
 int main(int argc, char* argv[]) {
-	printf("Program start!");
-	struct Platform platform = init_platform();
+	struct Platform platform;
+	init_platform(&platform);
+
+	struct Input input;
+	init_input(&input);
+
 	struct Game game;
-	start_game(&game);
+	init_game(&game);
 
-	int pixel_count = platform.win_w * platform.win_h;
-
-	// Seed random number generator
+	// See random number generator
 	srand(time(NULL));
-
-	// Set initial marker for deltaTime which is used to keep track of frame lengths for the
-	// purpose of framerate independent simulation of time dependent behaviors.
+	// Set initial ticks for calculating delta_time
 	Uint32 ticks_count = 0;
 
-	bool quit = false;
-	while(!quit) {
-		// Set the current deltaTime for the frame
+	while(!input.quit) {
 		double delta_time = (SDL_GetTicks() - ticks_count) / 1000.0f;
 		ticks_count = SDL_GetTicks();
-		printf("delta_time: %f\n", delta_time);
 
-		// Make sure delta time doesn't exceed a certain value. This is
-		// to prevent serious issues from occuring as a result of lag or
-		// using debug break points.
+		// Clamp delta_time to prevent gameplay issues occuring as a result of lag or
+		// debugging with break points.
 		if(delta_time > 0.05) {
 			delta_time = 0.05;
 		}
-		platform.input = input_from_platform();
-		update_and_render(&game, &platform, delta_time);
-		render(&platform);
-		quit = platform.input.quit;
+
+		poll_input(&input, &platform);
+		update_game(&game, &input, &platform, delta_time);
+		present_render(&platform);
 	}
+
 	SDL_DestroyWindow(platform.window);
 	SDL_DestroyRenderer(platform.renderer);
 	SDL_DestroyTexture(platform.texture);

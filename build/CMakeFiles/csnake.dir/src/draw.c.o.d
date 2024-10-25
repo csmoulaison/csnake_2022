@@ -1,6 +1,7 @@
-CMakeFiles/csnake.dir/src/platform.c.o: \
- /home/csmoulaison/archive/csnake_2022/src/platform.c \
+CMakeFiles/csnake.dir/src/draw.c.o: \
+ /home/csmoulaison/archive/csnake_2022/src/draw.c \
  /usr/include/stdc-predef.h \
+ /home/csmoulaison/archive/csnake_2022/src/draw.h \
  /home/csmoulaison/archive/csnake_2022/src/platform.h \
  /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_main.h \
  /usr/include/SDL2/SDL_stdinc.h /usr/include/SDL2/SDL_config.h \
@@ -174,7 +175,4 @@ CMakeFiles/csnake.dir/src/platform.c.o: \
  /usr/include/SDL2/SDL_version.h /usr/include/SDL2/SDL_locale.h \
  /usr/include/SDL2/SDL_misc.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include/stdbool.h \
- /home/csmoulaison/archive/csnake_2022/src/color.h \
- /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_events.h \
- /usr/include/SDL2/SDL_pixels.h /usr/include/SDL2/SDL_render.h \
- /usr/include/SDL2/SDL_video.h
+ /home/csmoulaison/archive/csnake_2022/src/color.h

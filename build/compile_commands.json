@@ -1,17 +1,32 @@
 [
 {
-  "directory": "/home/conner/repos/c-snake/build",
-  "command": "/usr/bin/cc  -I/home/conner/repos/c-snake/include -I/usr/include/SDL2 -std=gnu99 -o CMakeFiles/csnake.dir/src/game.c.o -c /home/conner/repos/c-snake/src/game.c",
-  "file": "/home/conner/repos/c-snake/src/game.c"
+  "directory": "/home/csmoulaison/archive/csnake_2022/build",
+  "command": "/sbin/cc  -I/home/csmoulaison/archive/csnake_2022/include -isystem /usr/include/SDL2 -std=gnu99 -o CMakeFiles/csnake.dir/src/game.c.o -c /home/csmoulaison/archive/csnake_2022/src/game.c",
+  "file": "/home/csmoulaison/archive/csnake_2022/src/game.c",
+  "output": "CMakeFiles/csnake.dir/src/game.c.o"
 },
 {
-  "directory": "/home/conner/repos/c-snake/build",
-  "command": "/usr/bin/cc  -I/home/conner/repos/c-snake/include -I/usr/include/SDL2 -std=gnu99 -o CMakeFiles/csnake.dir/src/main.c.o -c /home/conner/repos/c-snake/src/main.c",
-  "file": "/home/conner/repos/c-snake/src/main.c"
+  "directory": "/home/csmoulaison/archive/csnake_2022/build",
+  "command": "/sbin/cc  -I/home/csmoulaison/archive/csnake_2022/include -isystem /usr/include/SDL2 -std=gnu99 -o CMakeFiles/csnake.dir/src/input.c.o -c /home/csmoulaison/archive/csnake_2022/src/input.c",
+  "file": "/home/csmoulaison/archive/csnake_2022/src/input.c",
+  "output": "CMakeFiles/csnake.dir/src/input.c.o"
 },
 {
-  "directory": "/home/conner/repos/c-snake/build",
-  "command": "/usr/bin/cc  -I/home/conner/repos/c-snake/include -I/usr/include/SDL2 -std=gnu99 -o CMakeFiles/csnake.dir/src/platform.c.o -c /home/conner/repos/c-snake/src/platform.c",
-  "file": "/home/conner/repos/c-snake/src/platform.c"
+  "directory": "/home/csmoulaison/archive/csnake_2022/build",
+  "command": "/sbin/cc  -I/home/csmoulaison/archive/csnake_2022/include -isystem /usr/include/SDL2 -std=gnu99 -o CMakeFiles/csnake.dir/src/main.c.o -c /home/csmoulaison/archive/csnake_2022/src/main.c",
+  "file": "/home/csmoulaison/archive/csnake_2022/src/main.c",
+  "output": "CMakeFiles/csnake.dir/src/main.c.o"
+},
+{
+  "directory": "/home/csmoulaison/archive/csnake_2022/build",
+  "command": "/sbin/cc  -I/home/csmoulaison/archive/csnake_2022/include -isystem /usr/include/SDL2 -std=gnu99 -o CMakeFiles/csnake.dir/src/platform.c.o -c /home/csmoulaison/archive/csnake_2022/src/platform.c",
+  "file": "/home/csmoulaison/archive/csnake_2022/src/platform.c",
+  "output": "CMakeFiles/csnake.dir/src/platform.c.o"
+},
+{
+  "directory": "/home/csmoulaison/archive/csnake_2022/build",
+  "command": "/sbin/cc  -I/home/csmoulaison/archive/csnake_2022/include -isystem /usr/include/SDL2 -std=gnu99 -o CMakeFiles/csnake.dir/src/draw.c.o -c /home/csmoulaison/archive/csnake_2022/src/draw.c",
+  "file": "/home/csmoulaison/archive/csnake_2022/src/draw.c",
+  "output": "CMakeFiles/csnake.dir/src/draw.c.o"
 }
 ]

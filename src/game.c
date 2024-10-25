@@ -1,23 +1,59 @@
 #include "game.h"
+#include "draw.h"
 
-void update_and_render(struct Game *game, struct Platform *platform, double delta_time) {
-	game->orientation = get_board_orientation(platform);
-	if(game->state == GAME_RUNNING) update_running(game, platform, delta_time);
-	else update_interstitial(game, platform, delta_time);
+void init_game(struct Game *game) {
+	game->state = GAME_INTERSTITIAL;
+	struct Coordinate inter_coord = {0, 0};
+	game->countdown_coordinate = inter_coord;
+
+	// TODO: Randomize snake position and direction
+	struct Coordinate snake_head = {
+		COLUMNS / 2,
+		ROWS / 2
+	};
+	game->snake[0] = snake_head;
+	game->snake[1] = snake_head;
+	game->snake[1].x -= 1;
+	game->snake[2] = snake_head;
+	game->snake[2].x -= 2;
+	game->next_move = (struct Coordinate){1, 0};
+	// END: randomize snake position and direction
+
+	game->snake_length = 2;
+	game->direction = game->next_move;
+	game->time_to_next_step = game->step_length;
+	
+	move_food(game);
 }
 
-void update_interstitial(struct Game *game, struct Platform *platform, double delta_time) {
+void update_game(struct Game *game, struct Input *input, struct Platform *platform, double delta_time) {
+	game->orientation.tile_gap = 8; 
+	game->orientation.tile_size = (double)platform->win_h / ROWS - game->orientation.tile_gap - 4;
+	game->orientation.left_edge = ((double)platform->win_w / 2) - (((double)COLUMNS / 2) * game->orientation.tile_size) - (((double)COLUMNS / 2) * game->orientation.tile_gap);
+	game->orientation.top_edge = ((double)platform->win_h / 2) - (((double)ROWS / 2) * game->orientation.tile_size) - (((double)ROWS / 2) * game->orientation.tile_gap);
+
+	if(game->state == GAME_RUNNING) {
+		update_running_state(game, input, platform, delta_time);
+	} else {
+		update_interstitial_state(game, platform, delta_time);
+	}
+}
+
+// This function is responsible only for drawing the "loading" interstitial screen
+// shown at the start of each game.
+void update_interstitial_state(struct Game *game, struct Platform *platform, double delta_time) {
 	game->time_to_next_step -= delta_time;
 	if(game->time_to_next_step <= 0) {
 		game->time_to_next_step = 0.00001;
+
 		if(game->countdown_coordinate.x + 1 >= COLUMNS) {
 			game->countdown_coordinate.x = 0;
 			game->countdown_coordinate.y++;
+
 			if(game->countdown_coordinate.y >= ROWS) {
 				game->state = GAME_RUNNING;
 			}
-		}
-		else {
+		} else {
 			game->countdown_coordinate.x++;
 		}
 	}
@@ -29,57 +65,62 @@ void update_interstitial(struct Game *game, struct Platform *platform, double de
 	int tile_index_offset = 0;
 	while(tile_brightness > 50) {
 		tile_brightness -= 25;
+
 		if(tile_brightness < 50) {
 			tile_brightness = 50;
 		}
+
 		struct Coordinate tile_coord = game->countdown_coordinate;
+
 		int tile_index_walkback = 0;
 		while(tile_index_walkback < tile_index_offset) {
 			tile_index_walkback++;
+
 			if(tile_coord.x - 1 < 0) {
 				tile_coord.x = COLUMNS - 1;
 				tile_coord.y--;
-			}
-			else {
+			} else {
 				tile_coord.x--;
 			}
 		}
+
 		if(tile_coord.y >= 0 && tile_coord.y < ROWS) {
 			struct Color color = {50, tile_brightness, tile_brightness, 255};
 			draw_cell(platform, &game->orientation, &color, tile_coord.x, tile_coord.y);
 		}
+
 		tile_index_offset++;
 	}
 }
 
-void update_running(struct Game *game, struct Platform *platform, double delta_time) {
-	////////////
-	// UPDATE //
-	////////////
-	struct Input *input = &platform->input;
+void update_running_state(struct Game *game, struct Input *input, struct Platform *platform, double delta_time) {
+	// *** UPDATE ***
 
-	// Set move from just pressed input
-	if(input->w == true && game->previous_input.w == false && 
-	    game->direction.y != 1)
-	{
+	// Set move from previous frame's pressed input
+	if(input->w == true
+	&& game->previous_input.w == false 
+	&& game->direction.y != 1) {
 		game->next_move.x = 0;
 		game->next_move.y = -1;
 	}
-	if(input->a == true && game->previous_input.a == false &&
-	    game->direction.x != 1)
-	{
+
+	if(input->a == true 
+	&& game->previous_input.a == false 
+	&& game->direction.x != 1) {
 		game->next_move.x = -1;
 		game->next_move.y = 0;
 	}
-	if(input->s == true && game->previous_input.s == false &&
-	    game->direction.y != -1)
-	{
+
+	if(input->s == true 
+	&& game->previous_input.s == false 
+	&& game->direction.y != -1) {
 		game->next_move.x = 0;
 		game->next_move.y = 1;
 	}
-	if(input->d == true && game->previous_input.d == false &&
-	    game->direction.x != -1)
-	{
+
+	if(input->d == true 
+	&& game->previous_input.d == false 
+	&& game->direction.x != -1) {
 		game->next_move.x = 1;
 		game->next_move.y = 0;
 	}
@@ -87,19 +128,17 @@ void update_running(struct Game *game, struct Platform *platform, double delta_t
 	// Tick timer
 	game->time_to_next_step -= delta_time;
 	if(game->time_to_next_step <= 0) {
-		game->time_to_next_step = game->step_length;
+		game->time_to_next_step = STEP_LENGTH;
 		step(game);
 	}
 
-	// Reset input
+	// Update previous input to current input
 	game->previous_input.w = input->w;
 	game->previous_input.a = input->a;
 	game->previous_input.s = input->s;
 	game->previous_input.d = input->d;
 
-	////////////
-	// Render //
-	////////////
+	// *** RENDER ***
 	draw_background_and_tiles(platform, &game->orientation);
 
 	// Draw snake
@@ -128,16 +167,18 @@ void step(struct Game *game) {
 	   new_snake_head.y < 0 ||
 	   new_snake_head.y >= ROWS)
 	{
-		start_game(game);
+		init_game(game);
 		return;
 	}
 
 	// Check if new position hits the snake
 	for(int i = 0; i < game->snake_length; ++i) {
-		if(new_snake_head.x == game->snake[i].x && new_snake_head.y == game->snake[i].y) {
-			start_game(game);
-			return;
+		if(new_snake_head.x != game->snake[i].x || new_snake_head.y != game->snake[i].y) {
+			continue;
 		}
+
+		init_game(game);
+		return;
 	}
 
 	// Shift all snakes to the right and set i0 to the new position
@@ -156,36 +197,11 @@ void step(struct Game *game) {
 	}
 }
 
-void start_game(struct Game *game) {
-	game->state = GAME_INTERSTITIAL;
-	struct Coordinate inter_coord = {0, 0};
-	game->countdown_coordinate = inter_coord;
-
-	game->snake_length = 2;
-	struct Coordinate snake_head = {
-		COLUMNS / 2,
-		ROWS / 2
-	};
-	game->snake[0] = snake_head;
-	game->snake[1] = snake_head;
-	game->snake[1].x -= 1;
-	game->snake[2] = snake_head;
-	game->snake[2].x -= 2;
-
-	struct Coordinate next_move = {1, 0};
-	game->next_move = next_move;
-	game->direction = game->next_move;
-
-	game->step_length = 0.15;
-	game->time_to_next_step = game->step_length;
-	
-	move_food(game);
-}
 
 void draw_background_and_tiles(struct Platform *platform, struct BoardOrientation *orientation) {
 	// Draw background
 	struct Color bg = {25, 25, 25, 255};
-	fill_texture(platform, &bg);
+	clear_screen(platform, &bg);
 
 	// Draw tiles
 	for(int y = 0; y < ROWS; ++y) {
@@ -204,15 +220,6 @@ void draw_cell(struct Platform *platform, struct BoardOrientation *orientation, 
 			draw_pixel(platform, color, x, y); 
 		}
 	}
-}
-
-struct BoardOrientation get_board_orientation(struct Platform *platform) {
-	struct BoardOrientation orientation;
-	orientation.tile_gap = 8; 
-	orientation.tile_size = (double)platform->win_h / ROWS - orientation.tile_gap - 4;
-	orientation.left_edge = ((double)platform->win_w / 2) - (((double)COLUMNS / 2) * orientation.tile_size) - (((double)COLUMNS / 2) * orientation.tile_gap);
-	orientation.top_edge = ((double)platform->win_h / 2) - (((double)ROWS / 2) * orientation.tile_size) - (((double)ROWS / 2) * orientation.tile_gap);
-	return orientation;
 }
 
 void move_food(struct Game *game) {
